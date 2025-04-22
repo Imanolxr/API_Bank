@@ -13,23 +13,23 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
 
-    private final TransactionMapper mapper;
     private final ITransactionRepository transactionRepo;
     private final TransactionDTOMapper dtoMapper;
     private final ICardRepository cardRepo;
-    private final CardMapper cardMapper;
+    private final TransactionMapper transactionMapper;
 
-    public TransactionRepositoryAdapter(TransactionMapper mapper, ITransactionRepository transactionRepo, TransactionDTOMapper dtoMapper, ICardRepository cardRepo, CardMapper cardMapper) {
-        this.mapper = mapper;
+    public TransactionRepositoryAdapter(ITransactionRepository transactionRepo, TransactionDTOMapper dtoMapper, ICardRepository cardRepo, TransactionMapper transactionMapper) {
         this.transactionRepo = transactionRepo;
         this.dtoMapper = dtoMapper;
         this.cardRepo = cardRepo;
-        this.cardMapper = cardMapper;
+        this.transactionMapper = transactionMapper;
     }
+
 
     @Override
     public TransactionDTO newTransaction(Transaction transaction, String cardNumber) {
@@ -51,8 +51,12 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
     }
 
     @Override
-    public List<Transaction> allTransactions(String cardNumber) {
-        return List.of();
+    public List<Transaction> allMovements(String cardNumber) {
+        List<TransactionEntity> entities = transactionRepo.findAllMovementsByCardNumber(cardNumber);
+
+        return entities.stream()
+                .map(transactionMapper::toModel)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -62,7 +66,11 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
 
     @Override
     public List<Transaction> transactionsByMonth(int month, String cardNumber) {
-        return transactionRepo.findByMonthAndCardNumber(month, cardNumber);
+        List<TransactionEntity> entities = transactionRepo.findByMonthAndCardNumber(month, cardNumber);
+        return entities.stream()
+                .map(transactionMapper::toModel)
+                .collect(Collectors.toList());
+
     }
 
 

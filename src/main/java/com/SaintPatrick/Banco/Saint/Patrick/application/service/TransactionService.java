@@ -2,6 +2,7 @@ package com.SaintPatrick.Banco.Saint.Patrick.application.service;
 
 import com.SaintPatrick.Banco.Saint.Patrick.domain.model.Card;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.model.Transaction;
+import com.SaintPatrick.Banco.Saint.Patrick.domain.port.input.TransactionServicePort;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.port.output.CardRepositoryPort;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.port.output.TransactionRepositoryPort;
 import com.SaintPatrick.Banco.Saint.Patrick.infraestructure.rest.Dto.transaction.TransactionDTO;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class TransactionService {
+public class TransactionService implements TransactionServicePort {
     private final CardRepositoryPort cardRepo;
     private final TransactionRepositoryPort transactionRepo;
 
@@ -53,4 +54,10 @@ public class TransactionService {
     public List<Transaction> getMonthList(Integer month, String cardNumber) {
         return transactionRepo.transactionsByMonth(month,cardNumber);
     }
+
+    public List<Transaction> getAllMovements(String cardNumber){
+        return  transactionRepo.allMovements(cardNumber);
+    }
+
+
 }

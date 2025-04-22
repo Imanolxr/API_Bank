@@ -11,6 +11,7 @@ public class Card {
     private User user;
 
 
+
     public Card(String cardNumber, String pin, BigDecimal balance, User user) {
         if(cardNumber == null || cardNumber.length() != 16 || !cardNumber.matches("\\d{16}")){
             throw new IllegalArgumentException("El número de tarjeta debe tener 16 digitos");

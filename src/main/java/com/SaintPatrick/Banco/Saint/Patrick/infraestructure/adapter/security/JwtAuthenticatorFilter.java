@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtAuthenticatorFilter extends OncePerRequestFilter {
@@ -26,11 +29,15 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
         String token = extractToken(request);
 
         if (token != null) {
-            String cardNumber = extractCardNumberFromRequest(request);
+            String cardNumber = jwtUtil.extractCardNumber(token);
             if (jwtUtil.isTokenValid(token, cardNumber)) {
+
+                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        cardNumber, null, new ArrayList<>());
+                        cardNumber, null, authorities
+                );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Forbidden");
@@ -48,7 +55,5 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private String extractCardNumberFromRequest(HttpServletRequest request) {
-        return request.getRequestURI().split("/")[2]; // Suponiendo que el cardNumber está en la URI
-    }
+
 }

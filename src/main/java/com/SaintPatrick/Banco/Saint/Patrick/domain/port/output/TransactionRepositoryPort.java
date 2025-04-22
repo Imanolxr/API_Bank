@@ -10,7 +10,7 @@ import java.util.List;
 public interface TransactionRepositoryPort {
 
     TransactionDTO newTransaction(Transaction transaction, String cardNumber);
-    List<Transaction> allTransactions(String cardNumber);
+    List<Transaction> allMovements(String cardNumber);
     List<Transaction> transactionsByDate(String cardNumber, LocalDateTime dateTime);
     List<Transaction> transactionsByMonth(int month, String cardNumber);
 

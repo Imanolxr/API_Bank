@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface CardMapper {
     CardEntity toEntity(Card card);
+
     default Card toModel(CardEntity entity) {
         if (entity == null) return null;
 

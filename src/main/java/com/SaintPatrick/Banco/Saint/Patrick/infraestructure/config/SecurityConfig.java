@@ -28,9 +28,11 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/card/**").permitAll()
                         .requestMatchers("/transaction/new").permitAll()
+                        // .requestMatchers("/transaction/monthList").permitAll()
                         .anyRequest().authenticated()
                 )
-                //.addFilterBefore(jwtAuthenticatorFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticatorFilter, UsernamePasswordAuthenticationFilter.class)
+
         ;
         return http.build();
     }

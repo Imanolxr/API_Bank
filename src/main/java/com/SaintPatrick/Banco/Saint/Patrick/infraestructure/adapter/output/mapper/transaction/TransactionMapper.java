@@ -12,6 +12,9 @@ public interface TransactionMapper {
     @Mapping(target = "originCardEntity", source = "originCard")
     @Mapping(target = "destinyCardEntity", source = "destinyCard")
     TransactionEntity toEntity(Transaction transaction);
+
+    @Mapping(target = "originCard", source = "originCardEntity")
+    @Mapping(target = "destinyCard", source = "destinyCardEntity")
     Transaction toModel(TransactionEntity entity);
 
 

@@ -1,4 +1,5 @@
 package com.SaintPatrick.Banco.Saint.Patrick.infraestructure.adapter.security;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
@@ -25,7 +26,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String extractCardNumber(String token){
+    public String extractUserName(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -35,7 +36,7 @@ public class JwtUtil {
     }
 
     public boolean isTokenValid( String token, String cardNumber){
-        String extractedCard = extractCardNumber(token);
+        String extractedCard = extractUserName(token);
         return extractedCard.equals(cardNumber) && !isTokenExpired(token);
     }
 
@@ -48,4 +49,15 @@ public class JwtUtil {
                 .getExpiration();
         return expiration.before(new Date());
     }
+
+    public String extractCardNumber(String token) {
+        return extractClaims(token).getSubject();
+    }
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
 }
