@@ -8,4 +8,5 @@ public interface CardServicePort {
 
     void newCard(Card newCard);
     Optional<Card> findByCardNumber(String cardNumber);
+    boolean existByCardNumber(String cardNumber);
 }

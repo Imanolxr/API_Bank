@@ -39,4 +39,14 @@ public class CardController {
         // Si la tarjeta existe, se mapea y se retorna el DTO
         return ResponseEntity.ok(cardResponseMapper.toResponse(card.get()));
     }
+    @GetMapping("/exists")
+    public ResponseEntity <Boolean> checkIfCardExists(@RequestParam(value = "cardNumber", required = true) String cardNumber){
+
+        boolean exists = cardServ.existByCardNumber(cardNumber);
+        if (exists){
+            System.out.println("Tarjeta: " + cardNumber + " existe para realizar transferencia");
+        }
+        return ResponseEntity.ok(exists);
+
+    }
 }

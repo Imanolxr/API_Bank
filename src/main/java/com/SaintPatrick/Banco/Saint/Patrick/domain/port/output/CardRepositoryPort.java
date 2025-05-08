@@ -17,4 +17,5 @@ public interface CardRepositoryPort {
 
     void updateCard(Card cardToDebit);
 
+    boolean existByCardNumber(String cardNumber);
 }

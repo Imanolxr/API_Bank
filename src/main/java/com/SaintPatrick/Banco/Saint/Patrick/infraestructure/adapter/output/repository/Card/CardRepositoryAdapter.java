@@ -82,5 +82,11 @@ public class CardRepositoryAdapter implements CardRepositoryPort {
         }
     }
 
+    @Override
+    public boolean existByCardNumber(String cardNumber) {
+        CardEntity entity = cardRepo.findByCardNumber(cardNumber).orElseThrow(() -> new EntityNotFoundException("Tarjeta numero:" + cardNumber + " no encontrada"));
+        return entity != null;
+    }
+
 
 }

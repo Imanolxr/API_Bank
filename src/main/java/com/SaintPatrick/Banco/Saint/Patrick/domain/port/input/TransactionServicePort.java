@@ -10,4 +10,6 @@ public interface TransactionServicePort {
     Transaction createTransaction(String cardNumberToCredit, BigDecimal amountOfTransaction, String cardNumberToDebit);
     List<Transaction> getMonthList(Integer month, String cardNumber);
     List<Transaction> getAllMovements(String cardNumber);
+    BigDecimal getMonthSpent(String cardNumber);
+    BigDecimal getMonthIncome(String cardNumber);
 }

@@ -1,10 +1,12 @@
 package com.SaintPatrick.Banco.Saint.Patrick.infraestructure.rest.controller;
 
 import com.SaintPatrick.Banco.Saint.Patrick.application.service.TransactionService;
+import com.SaintPatrick.Banco.Saint.Patrick.domain.exception.UnauthorizedAccessException;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.model.Transaction;
 import com.SaintPatrick.Banco.Saint.Patrick.infraestructure.adapter.input.TransactionDTOMapper;
 import com.SaintPatrick.Banco.Saint.Patrick.infraestructure.rest.Dto.transaction.NewTransactionDTO;
 import com.SaintPatrick.Banco.Saint.Patrick.infraestructure.rest.Dto.transaction.TransactionDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,16 +27,23 @@ public class TransactionController {
     }
 
 
+    @Operation(summary = "Crear una nueva transacción", description = "Realiza una transferencia entre dos tarjetas.")
     @PostMapping("/new")
     public ResponseEntity<TransactionDTO> newTransaction(@RequestBody NewTransactionDTO dto){
-        Transaction transaction = transactionServ.createTransaction(dto.getDestinyCardNumber(), dto.getAmount(), dto.getOriginCardNumber());
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedCardNumber = auth.getName();
+
+
+        Transaction transaction = transactionServ.createTransaction(dto.getDestinyCardNumber(), dto.getAmount(), loggedCardNumber);
+
         return ResponseEntity.ok(mapper.toDTO(transaction,loggedCardNumber));
     }
 
+    @Operation(summary = "Mostrar Listado de Transacciones", description = "Muestra las Transacciones hechas en el ultimo mes, o en el mes que se le pase como parametro.")
     @GetMapping("/monthList")
     public ResponseEntity<List<TransactionDTO>> getMonthList(@RequestParam(value = "month", required = false) Integer month){
+
         if(month == null){
             month = LocalDate.now().getMonthValue();
         }

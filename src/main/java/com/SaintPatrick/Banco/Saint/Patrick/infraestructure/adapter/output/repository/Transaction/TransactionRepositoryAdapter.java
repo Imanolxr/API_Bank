@@ -11,6 +11,8 @@ import com.SaintPatrick.Banco.Saint.Patrick.infraestructure.adapter.output.repos
 import com.SaintPatrick.Banco.Saint.Patrick.infraestructure.rest.Dto.transaction.TransactionDTO;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,6 +73,33 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
                 .map(transactionMapper::toModel)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public BigDecimal getMonthSpent(String cardNumber) {
+        LocalDateTime startOfMonth = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        LocalDateTime endOfMonth = LocalDateTime.now()
+                .withDayOfMonth(LocalDate.now().lengthOfMonth())
+                .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        return transactionRepo.getTotalMonthSpent(cardNumber, startOfMonth, endOfMonth)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    @Override
+    public BigDecimal getMonthIncome(String cardNumber) {
+        LocalDateTime startOfMonth = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        LocalDateTime endOfMonth = LocalDateTime.now()
+                .withDayOfMonth(LocalDate.now().lengthOfMonth())
+                .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        return transactionRepo.getTotalMonthIncome(cardNumber,startOfMonth, endOfMonth).orElse(BigDecimal.ZERO);
     }
 
 

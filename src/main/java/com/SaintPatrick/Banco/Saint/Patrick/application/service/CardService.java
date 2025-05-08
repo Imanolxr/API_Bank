@@ -1,5 +1,6 @@
 package com.SaintPatrick.Banco.Saint.Patrick.application.service;
 
+import com.SaintPatrick.Banco.Saint.Patrick.domain.exception.InvalidCardException;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.model.Card;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.port.input.CardServicePort;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.port.output.CardRepositoryPort;
@@ -25,6 +26,11 @@ public class CardService implements CardServicePort {
     }
     public Optional<Card> findByCardNumber(String cardNumber){
 
+        Card card = cardRepo.findByCardNumber(cardNumber).orElseThrow(() -> new InvalidCardException("Tarjeta de origen no encontrada"));
         return cardRepo.findByCardNumber(cardNumber);
+    }
+
+    public boolean existByCardNumber(String cardNumber) {
+        return cardRepo.existByCardNumber(cardNumber);
     }
 }

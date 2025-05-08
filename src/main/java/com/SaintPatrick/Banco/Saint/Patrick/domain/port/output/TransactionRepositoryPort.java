@@ -13,5 +13,7 @@ public interface TransactionRepositoryPort {
     List<Transaction> allMovements(String cardNumber);
     List<Transaction> transactionsByDate(String cardNumber, LocalDateTime dateTime);
     List<Transaction> transactionsByMonth(int month, String cardNumber);
+    public BigDecimal getMonthSpent(String cardNumber);
 
+    BigDecimal getMonthIncome(String cardNumber);
 }

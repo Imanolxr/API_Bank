@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -35,5 +36,23 @@ public class MovementController {
         List<TransactionDTO> response = allMovements.stream().map(transaction -> mapper.toDTO(transaction,cardNumber)).toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/totalMonthSpent")
+    public ResponseEntity<?> monthSpent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String cardNumber = auth.getName();
+        BigDecimal totalSpent = transactionServ.getMonthSpent(cardNumber);
+        return ResponseEntity.ok(totalSpent);
+
+    }
+
+    @GetMapping("/totalMonthIncome")
+    public ResponseEntity<?> monthIncome(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String cardNumber = auth.getName();
+        BigDecimal totalIncome = transactionServ.getMonthIncome(cardNumber);
+        return ResponseEntity.ok(totalIncome);
+
     }
 }

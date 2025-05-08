@@ -1,5 +1,8 @@
 package com.SaintPatrick.Banco.Saint.Patrick.application.service;
 
+import com.SaintPatrick.Banco.Saint.Patrick.domain.exception.InsufficientBalanceException;
+import com.SaintPatrick.Banco.Saint.Patrick.domain.exception.InvalidCardException;
+import com.SaintPatrick.Banco.Saint.Patrick.domain.exception.NotFoundException;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.model.Card;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.model.Transaction;
 import com.SaintPatrick.Banco.Saint.Patrick.domain.port.input.TransactionServicePort;
@@ -27,13 +30,13 @@ public class TransactionService implements TransactionServicePort {
     public Transaction createTransaction(String cardNumberToCredit, BigDecimal amountOfTransaction, String cardNumberToDebit){
 
         //verifica existencia tarjetas
-        Card cardToDebit = cardRepo.findByCardNumber(cardNumberToDebit).orElseThrow(() -> new IllegalArgumentException("Tarjeta de origen no encontrada"));
-        Card cardToCredit = cardRepo.findByCardNumber(cardNumberToCredit).orElseThrow(() -> new IllegalArgumentException("Tarjeta de destino no encontrada"));
+        Card cardToDebit = cardRepo.findByCardNumber(cardNumberToDebit).orElseThrow(() -> new InvalidCardException("Tarjeta de origen no encontrada"));
+        Card cardToCredit = cardRepo.findByCardNumber(cardNumberToCredit).orElseThrow(() -> new InvalidCardException("Tarjeta de destino no encontrada"));
 
 
         //verifica saldo en la tarjeta a debitar
         if(cardToDebit.getBalance().compareTo(amountOfTransaction) < 0){
-            throw new IllegalArgumentException("Saldo insuficiente en la cuenta a debitar");
+            throw new InsufficientBalanceException("Saldo insuficiente en la cuenta a debitar");
         }
 
         //realiza la transaccion
@@ -52,12 +55,28 @@ public class TransactionService implements TransactionServicePort {
 
 
     public List<Transaction> getMonthList(Integer month, String cardNumber) {
+        Card card = cardRepo.findByCardNumber(cardNumber).orElseThrow(() -> new InvalidCardException("Tarjeta de origen no encontrada"));
+
+
         return transactionRepo.transactionsByMonth(month,cardNumber);
     }
 
     public List<Transaction> getAllMovements(String cardNumber){
+
+        Card card = cardRepo.findByCardNumber(cardNumber).orElseThrow(() -> new InvalidCardException("Tarjeta de origen no encontrada"));
+
         return  transactionRepo.allMovements(cardNumber);
     }
 
 
+    public BigDecimal getMonthSpent(String cardNumber) {
+        Card card = cardRepo.findByCardNumber(cardNumber).orElseThrow(() -> new InvalidCardException("Tarjeta no encontrada"));
+        return transactionRepo.getMonthSpent(cardNumber);
+
+    }
+
+    public BigDecimal getMonthIncome(String cardNumber) {
+        Card card = cardRepo.findByCardNumber(cardNumber).orElseThrow(() -> new InvalidCardException("Tarjeta no encontrada"));
+        return transactionRepo.getMonthIncome(cardNumber);
+    }
 }
